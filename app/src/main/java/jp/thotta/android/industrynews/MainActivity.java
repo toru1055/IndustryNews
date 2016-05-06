@@ -4,12 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,56 +30,15 @@ import java.util.List;
 import jp.thotta.android.industrynews.view.SlidingTabLayout;
 
 public class MainActivity extends AppCompatActivity {
-    // 1. AsyncTaskLoaderをMainActivityに付けることを検討する
-    // 1-1. その前にgitに登録する
-    // 2. SlidingTabLayout.onPageChangeListener的なので、loaderを動かす
-    // 2-1. 現在のPagePositionを記憶しておく
-    // 2-2. AsyncTaskLoaderのforceLoadをキック（initLoader）
-    // 3. onLoadFinishedでNewsListをListViewに反映
-    // 3-1. もしくはmSlidingTabLayout.getRootView()でFragmentのrootViewにアクセスできるので、
-    // adapterをMainActivityに持ってきてMainActivityでListViewと紐付ける
-
-    public static class PagerItem {
-        String pageTitle;
-        String sortMode;
-        List<Industry> industries;
-        int indicatorColor;
-        int dividerColor;
-
-        public PagerItem(String pageTitle, String sortMode,
-                         List<Industry> industries,
-                         int indicatorColor, int dividerColor) {
-            this.pageTitle = pageTitle;
-            this.sortMode = sortMode;
-            this.industries = industries;
-            this.indicatorColor = indicatorColor;
-            this.dividerColor = dividerColor;
-        }
-
-        public String getPageTitle() {
-            return pageTitle;
-        }
-
-        public String getSortMode() {
-            return sortMode;
-        }
-
-        public List<Industry> getIndustries() {
-            return industries;
-        }
-
-        public Industry getIndustry() {
-            return industries.get(0);
-        }
-
-        public int getIndicatorColor() {
-            return indicatorColor;
-        }
-
-        public int getDividerColor() {
-            return dividerColor;
-        }
-    }
+    /*
+    1. SettingActivityを起動する場合は、MainActivityをfinishするか、フラグを立てる
+        http://stackoverflow.com/questions/11347161/oncreate-always-called-if-navigating-back-with-intent
+    2. Fragmentに業種情報を持たせる時は、メンバ変数ではなくBundleに持たせる
+    2-1. PagerItemにgetQueryメソッドを作成し、APに必要のクエリな情報をStringに変換する
+    2-2. もしくはPagerItemをSerializable実装にして、Bundleに持たせる
+    3. コードを綺麗にする。static classとかの意味をしっかり理解して使う.
+    3-1. FragmentとPagerItemは別ファイルにする
+     */
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -103,15 +66,11 @@ public class MainActivity extends AppCompatActivity {
         buttonIndustrySelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, IndustrySelectionActivity.class));
+                Intent intent = new Intent(MainActivity.this, IndustrySelectionActivity.class);
+                startActivity(intent);
             }
         });
         mDbHelper = new DbHelper(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         if (Industry.isEmpty(mDbHelper.getReadableDatabase())) {
             startActivity(new Intent(this, IndustrySelectionActivity.class));
             return;
@@ -134,10 +93,23 @@ public class MainActivity extends AppCompatActivity {
                     industry.getSortMode(), l, Color.YELLOW, Color.GRAY));
         }
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        Log.d(getClass().getSimpleName(), "onResume.pagerAdapeterCount: " + mSectionsPagerAdapter.getCount());
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(mViewPager);
+    }
+
+    @Override
+    protected void onPause() {
+        getSupportFragmentManager().popBackStackImmediate();
+        super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        recreate();
+        super.onRestart();
     }
 
     @Override
@@ -165,80 +137,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         mDbHelper.close();
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-        NewsListAdapter mNewsListAdapter;
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            ListView listView =
-                    (ListView) rootView.findViewById(R.id.news_list_view);
-            mNewsListAdapter = new NewsListAdapter(getContext());
-            listView.setAdapter(mNewsListAdapter);
-            int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-            return rootView;
-        }
-
-        @Override
-        public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
-            mNewsListAdapter.add(new News(1, "http://www.yahoo.co.jp/1", "ヤフー1"));
-            mNewsListAdapter.add(new News(2, "http://www.yahoo.co.jp/2", "ヤフー2"));
-            mNewsListAdapter.add(new News(3, "http://www.yahoo.co.jp/3", "ヤフー3"));
-        }
-
-        public class NewsListAdapter extends ArrayAdapter<News> {
-
-            public NewsListAdapter(Context context) {
-                super(context, 0);
-            }
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                if (convertView == null) {
-                    LayoutInflater layoutInflater =
-                            (LayoutInflater) getContext().getSystemService(
-                                    Context.LAYOUT_INFLATER_SERVICE);
-                    convertView = layoutInflater.inflate(R.layout.news_row, null);
-                }
-                News news = getItem(position);
-                TextView titleTextView =
-                        (TextView) convertView.findViewById(R.id.textViewTitle);
-                TextView descriptionTextView =
-                        (TextView) convertView.findViewById(R.id.textViewDescription);
-                titleTextView.setText(news.getTitle());
-                descriptionTextView.setText(news.getDescription());
-                return convertView;
-            }
-        }
+        super.onDestroy();
     }
 
     /**
@@ -253,19 +153,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position);
+            String apiQuery = mPagerItemList.get(position).getQuery();
+            Log.d(this.getClass().getSimpleName(), "getItem.position: " + position);
+            Log.d(this.getClass().getSimpleName(), "getItem.getQuery: " + apiQuery);
+            return PlaceholderFragment.newInstance(position, apiQuery);
         }
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return mPagerItemList.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
+            Log.d(this.getClass().getSimpleName(), "getPageTitle.position: " + position);
             return mPagerItemList.get(position).getPageTitle();
         }
     }
