@@ -85,11 +85,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
     protected void onRestart() {
         recreate();
         super.onRestart();
@@ -136,10 +131,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            String apiQuery = gPagerItemList.get(position).getQuery();
             Log.d(this.getClass().getSimpleName(), "getItem.position: " + position);
-            Log.d(this.getClass().getSimpleName(), "getItem.getQuery: " + apiQuery);
-            return PlaceholderFragment.newInstance(position, apiQuery);
+            return PlaceholderFragment.newInstance(position);
         }
 
         @Override
