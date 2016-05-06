@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+            Log.d(this.getClass().getSimpleName(), "getItem.gPagerItemList.size(): " + gPagerItemList.size());
             Log.d(this.getClass().getSimpleName(), "getItem.position: " + position);
             return PlaceholderFragment.newInstance(position);
         }
