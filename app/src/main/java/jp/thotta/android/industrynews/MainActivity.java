@@ -82,6 +82,17 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(mViewPager);
+        mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return gPagerItemList.get(position).getIndicatorColor();
+            }
+
+            @Override
+            public int getDividerColor(int position) {
+                return gPagerItemList.get(position).getDividerColor();
+            }
+        });
     }
 
     @Override
