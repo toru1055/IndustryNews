@@ -1,28 +1,18 @@
 package jp.thotta.android.industrynews;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +21,6 @@ import jp.thotta.android.industrynews.view.SlidingTabLayout;
 
 public class MainActivity extends AppCompatActivity {
     /*
-    1. SettingActivityを起動する場合は、MainActivityをfinishするか、フラグを立てる
-        http://stackoverflow.com/questions/11347161/oncreate-always-called-if-navigating-back-with-intent
-    2. Fragmentに業種情報を持たせる時は、メンバ変数ではなくBundleに持たせる
-    2-1. PagerItemにgetQueryメソッドを作成し、APに必要のクエリな情報をStringに変換する
-    2-2. もしくはPagerItemをSerializable実装にして、Bundleに持たせる
-    3. コードを綺麗にする。static classとかの意味をしっかり理解して使う.
-    3-1. FragmentとPagerItemは別ファイルにする
      */
 
     /**
@@ -56,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private SlidingTabLayout mSlidingTabLayout;
-    private List<PagerItem> mPagerItemList;
+    public static List<PagerItem> gPagerItemList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         buttonIndustrySelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mViewPager.setCurrentItem(0);
                 Intent intent = new Intent(MainActivity.this, IndustrySelectionActivity.class);
                 startActivity(intent);
             }
@@ -81,15 +65,15 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this, IndustrySelectionActivity.class));
             return;
         }
-        mPagerItemList = new ArrayList<>();
-        mPagerItemList.add(new PagerItem("新着", "recent", industries,
+        gPagerItemList = new ArrayList<>();
+        gPagerItemList.add(new PagerItem("新着", "recent", industries,
                 Color.BLUE, Color.GRAY));
-        mPagerItemList.add(new PagerItem("人気", "click", industries,
+        gPagerItemList.add(new PagerItem("人気", "click", industries,
                 Color.GREEN, Color.GRAY));
         for (Industry industry : industries) {
             List<Industry> l = new ArrayList<>();
             l.add(industry);
-            mPagerItemList.add(new PagerItem(industry.getName(),
+            gPagerItemList.add(new PagerItem(industry.getName(),
                     industry.getSortMode(), l, Color.YELLOW, Color.GRAY));
         }
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -101,9 +85,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        getSupportFragmentManager().popBackStackImmediate();
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
@@ -153,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            String apiQuery = mPagerItemList.get(position).getQuery();
+            String apiQuery = gPagerItemList.get(position).getQuery();
             Log.d(this.getClass().getSimpleName(), "getItem.position: " + position);
             Log.d(this.getClass().getSimpleName(), "getItem.getQuery: " + apiQuery);
             return PlaceholderFragment.newInstance(position, apiQuery);
@@ -161,13 +144,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return mPagerItemList.size();
+            return gPagerItemList.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             Log.d(this.getClass().getSimpleName(), "getPageTitle.position: " + position);
-            return mPagerItemList.get(position).getPageTitle();
+            return gPagerItemList.get(position).getPageTitle();
         }
     }
 }

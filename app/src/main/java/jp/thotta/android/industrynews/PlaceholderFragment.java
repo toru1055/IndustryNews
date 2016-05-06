@@ -5,7 +5,6 @@ package jp.thotta.android.industrynews;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -57,7 +56,7 @@ public class PlaceholderFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.news_list_view);
         int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-        String apiQuery = getArguments().getString(ARG_API_QUERY);
+        String apiQuery = MainActivity.gPagerItemList.get(sectionNumber).getQuery();
         Log.d(getClass().getSimpleName(), "onCreateView.sectionNumber: " + sectionNumber);
         Log.d(getClass().getSimpleName(), "onCreateView.apiQuery: " + apiQuery);
         mNewsListAdapter = new NewsListAdapter(getContext());
@@ -71,7 +70,7 @@ public class PlaceholderFragment extends Fragment
     public void onResume() {
         super.onResume();
         int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-        String apiQuery = getArguments().getString(ARG_API_QUERY);
+        String apiQuery = MainActivity.gPagerItemList.get(sectionNumber).getQuery();
         Log.d(this.getClass().getSimpleName(), "onResume.sectionNumber: " + sectionNumber);
         Log.d(this.getClass().getSimpleName(), "onResume.apiQuery: " + apiQuery);
     }
@@ -80,10 +79,9 @@ public class PlaceholderFragment extends Fragment
     @Override
     public Loader<List<News>> onCreateLoader(int id, Bundle args) {
         int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-        String apiQuery = getArguments().getString(ARG_API_QUERY);
         Log.d(this.getClass().getSimpleName(), "onCreateLoader.id: " + id);
         Log.d(this.getClass().getSimpleName(), "onCreateLoader.sectionNumber: " + sectionNumber);
-        Loader loader = new NewsApiLoader(getContext(), apiQuery);
+        Loader loader = new NewsApiLoader(getContext(), sectionNumber);
         loader.forceLoad();
         return loader;
     }
@@ -102,11 +100,11 @@ public class PlaceholderFragment extends Fragment
     }
 
     public static class NewsApiLoader extends AsyncTaskLoader<List<News>> {
-        String apiQuery;
+        int sectionNumber;
 
-        public NewsApiLoader(Context context, String apiQuery) {
+        public NewsApiLoader(Context context, int sectionNumber) {
             super(context);
-            this.apiQuery = apiQuery;
+            this.sectionNumber = sectionNumber;
         }
 
         @Override
@@ -121,7 +119,7 @@ public class PlaceholderFragment extends Fragment
             newsList.add(new News(1, "http://www.yahoo.co.jp/1", "ヤフー1"));
             newsList.add(new News(2, "http://www.yahoo.co.jp/2", "ヤフー2"));
             News news3 = new News(3, "http://www.yahoo.co.jp/3", "ヤフー3");
-            news3.setDescription(apiQuery);
+            news3.setDescription(MainActivity.gPagerItemList.get(sectionNumber).getQuery());
             newsList.add(news3);
             return newsList;
         }
