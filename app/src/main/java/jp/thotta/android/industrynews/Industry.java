@@ -42,7 +42,7 @@ public class Industry {
     public static void addAll(List<Industry> industries, SQLiteDatabase db) {
         for (Industry industry : industries) {
             db.insertWithOnConflict(TABLE_NAME, null,
-                    industry.getContentsValues(),
+                    industry.getContentValues(),
                     SQLiteDatabase.CONFLICT_IGNORE);
         }
     }
@@ -119,11 +119,11 @@ public class Industry {
                 (cursor.getInt(cursor.getColumnIndex(COL_IS_READING)) == 1);
         this.sortMode = cursor.getString(cursor.getColumnIndex(COL_SORT_MODE));
         this.lastUpdated = new Date(
-                cursor.getInt(cursor.getColumnIndex(COL_LAST_UPDATED))
+                cursor.getLong(cursor.getColumnIndex(COL_LAST_UPDATED))
         );
     }
 
-    public ContentValues getContentsValues() {
+    public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
         values.put(COL_ID, id);
         values.put(COL_NAME, name);
@@ -137,6 +137,6 @@ public class Industry {
     public void updateDatabase(SQLiteDatabase db) {
         String where = COL_ID + " = ?";
         String[] whereArgs = {String.valueOf(id)};
-        db.update(TABLE_NAME, getContentsValues(), where, whereArgs);
+        db.update(TABLE_NAME, getContentValues(), where, whereArgs);
     }
 }

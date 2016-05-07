@@ -27,8 +27,11 @@ import java.util.List;
 public class PlaceholderFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<List<News>> {
     /**
-     * The fragment argument representing the section number for this
-     * fragment.
+     * TODO: 本当はスワイプだけでリロードしたくない。うまく制御したい
+     * TODO: NewsクラスのDBアクセス
+     * TODO: ListViewにonClickListener登録
+     * TODO: test書く
+     * TODO: API作る
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
     NewsListAdapter mNewsListAdapter;
