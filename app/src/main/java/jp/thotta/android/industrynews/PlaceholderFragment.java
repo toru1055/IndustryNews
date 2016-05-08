@@ -4,6 +4,8 @@ package jp.thotta.android.industrynews;
  */
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,9 +16,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +31,25 @@ import java.util.List;
 public class PlaceholderFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<List<News>> {
     /**
+     * TODO: ListViewにonClickListener登録: ここでWebView用のActivityも作る
+     * TODO: WebViewにStock機能を作る。StockListActivityを作る
+     * TODO: ListViewにAdViewを差し込む方法を調べて実装する
      * TODO: 本当はスワイプだけでリロードしたくない。うまく制御したい
-     * TODO: NewsクラスのDBアクセス
-     * TODO: ListViewにonClickListener登録
      * TODO: test書く
-     * TODO: API作る
+     * TODO: API作る. Android StudioかIntelliJで作る. Spring 使ってみる
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+    AdapterView.OnItemClickListener onListViewItemClickListener =
+            new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            News news = (News) view.getTag();
+            Log.d(getClass().getSimpleName(), news.getUrl());
+            Uri uri = Uri.parse(news.getUrl());
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        }
+    };
     NewsListAdapter mNewsListAdapter;
     ListView mListView;
 
@@ -67,6 +83,7 @@ public class PlaceholderFragment extends Fragment
         Log.d(getClass().getSimpleName(), "onCreateView.sectionNumber: " + sectionNumber);
         mNewsListAdapter = new NewsListAdapter(getContext());
         mListView.setAdapter(mNewsListAdapter);
+        mListView.setOnItemClickListener(onListViewItemClickListener);
         getLoaderManager().initLoader(0, getArguments(), this).forceLoad();
         return rootView;
     }
@@ -90,7 +107,7 @@ public class PlaceholderFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<List<News>> loader, List<News> data) {
-        if(data != null) {
+        if (data != null) {
             mNewsListAdapter.clear();
             for (News news : data) {
                 mNewsListAdapter.add(news);
@@ -157,7 +174,7 @@ public class PlaceholderFragment extends Fragment
                     (TextView) convertView.findViewById(R.id.textViewDescription);
             titleTextView.setText(news.getTitle());
             descriptionTextView.setText(news.getDescription());
-            //convertView.setTag("url", "http://...");
+            convertView.setTag(news);
             return convertView;
         }
     }
