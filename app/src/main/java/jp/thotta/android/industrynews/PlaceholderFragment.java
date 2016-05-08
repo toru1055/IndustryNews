@@ -45,8 +45,8 @@ public class PlaceholderFragment extends Fragment
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             News news = (News) view.getTag();
             Log.d(getClass().getSimpleName(), news.getUrl());
-            Uri uri = Uri.parse(news.getUrl());
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            Intent intent = new Intent(getContext(), DetailNewsActivity.class);
+            intent.putExtra("url", news.getUrl());
             startActivity(intent);
         }
     };
@@ -134,12 +134,12 @@ public class PlaceholderFragment extends Fragment
             try {
                 Thread.sleep(1000);
                 List<News> newsList = new ArrayList<>();
-                newsList.add(new News(1, "http://www.yahoo.co.jp/1", "ヤフー1"));
-                News news2 = new News(2, "http://www.yahoo.co.jp/2", "ヤフー2");
+                newsList.add(new News(1, "http://m.yahoo.co.jp/#1", "ヤフー1"));
+                News news2 = new News(2, "http://m.yahoo.co.jp/#2", "ヤフー2");
                 news2.setDescription("あああああああああああああああああああああああああああ" +
                         "あああああああああああああああああああああああああああああああああああ" +
                         "ああああああああ");
-                News news3 = new News(3, "http://www.yahoo.co.jp/3", "ヤフー3");
+                News news3 = new News(3, "http://www.yahoo.co.jp/#3", "ヤフー3");
                 news3.setDescription(MainActivity.gPagerItemList.get(sectionNumber).getQuery());
                 newsList.add(news2);
                 newsList.add(news3);
