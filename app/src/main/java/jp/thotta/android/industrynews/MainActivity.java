@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +94,14 @@ public class MainActivity extends AppCompatActivity {
                 mViewPager.setCurrentItem(0);
                 Intent intent = new Intent(MainActivity.this, IndustrySelectionActivity.class);
                 startActivity(intent);
+            }
+        });
+        FloatingActionButton fabStock = (FloatingActionButton) findViewById(R.id.fabStock);
+        fabStock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
     }

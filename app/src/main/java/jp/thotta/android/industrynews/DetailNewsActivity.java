@@ -13,29 +13,41 @@ import android.webkit.WebViewClient;
 
 public class DetailNewsActivity extends AppCompatActivity {
     WebView mWebView;
+    News mNews;
+    DbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_news);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        dbHelper = new DbHelper(this);
         Intent intent = getIntent();
         String url = intent.getStringExtra("url");
+        mNews = (News) intent.getSerializableExtra("news");
         mWebView = (WebView) findViewById(R.id.webView);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setWebViewClient(new WebViewClient());
         mWebView.loadUrl(url);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(url);
+        toolbar.setTitle(mNews.getTitle());
         setSupportActionBar(toolbar);
+        FloatingActionButton fabStock = (FloatingActionButton) findViewById(R.id.fabStock);
+        fabStock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mNews.setIsStocked(true);
+                mNews.updateDatabase(dbHelper.getWritableDatabase());
+                Snackbar.make(view, "Stocked: " + mNews.getTitle(), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+        FloatingActionButton fabHome = (FloatingActionButton) findViewById(R.id.fabHome);
+        fabHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
     @Override
@@ -45,12 +57,6 @@ public class DetailNewsActivity extends AppCompatActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    void openThisActivity(String url) {
-        Intent intent = new Intent(this, DetailNewsActivity.class);
-        intent.putExtra("url", url);
-        startActivity(intent);
     }
 
 }

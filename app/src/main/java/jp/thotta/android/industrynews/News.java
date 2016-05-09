@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +13,8 @@ import java.util.List;
 /**
  * Created by thotta on 2016/05/04.
  */
-public class News {
+public class News implements Serializable {
+    private static final long serialVersionUID = 0L;
     public static final String TABLE_NAME = "news";
     public static final String COL_ID = "id";
     public static final String COL_URL = "url";
@@ -223,4 +225,5 @@ public class News {
                 ", isStocked=" + isStocked +
                 '}';
     }
+
 }

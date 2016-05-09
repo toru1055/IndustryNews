@@ -31,7 +31,6 @@ import java.util.List;
 public class PlaceholderFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<List<News>> {
     /**
-     * TODO: ListViewにonClickListener登録: ここでWebView用のActivityも作る
      * TODO: WebViewにStock機能を作る。StockListActivityを作る
      * TODO: ListViewにAdViewを差し込む方法を調べて実装する
      * TODO: 本当はスワイプだけでリロードしたくない。うまく制御したい
@@ -47,6 +46,7 @@ public class PlaceholderFragment extends Fragment
             Log.d(getClass().getSimpleName(), news.getUrl());
             Intent intent = new Intent(getContext(), DetailNewsActivity.class);
             intent.putExtra("url", news.getUrl());
+            intent.putExtra("news", news);
             startActivity(intent);
         }
     };
