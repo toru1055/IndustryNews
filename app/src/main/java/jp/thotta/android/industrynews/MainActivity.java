@@ -3,6 +3,8 @@ package jp.thotta.android.industrynews;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -45,15 +47,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button buttonIndustrySelection = (Button) findViewById(R.id.button_industry_selection);
-        buttonIndustrySelection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mViewPager.setCurrentItem(0);
-                Intent intent = new Intent(MainActivity.this, IndustrySelectionActivity.class);
-                startActivity(intent);
-            }
-        });
         mDbHelper = new DbHelper(this);
         if (Industry.isEmpty(mDbHelper.getReadableDatabase())) {
             startActivity(new Intent(this, IndustrySelectionActivity.class));
@@ -91,6 +84,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public int getDividerColor(int position) {
                 return gPagerItemList.get(position).getDividerColor();
+            }
+        });
+        FloatingActionButton fabSetting = (FloatingActionButton) findViewById(R.id.fabSetting);
+        fabSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewPager.setCurrentItem(0);
+                Intent intent = new Intent(MainActivity.this, IndustrySelectionActivity.class);
+                startActivity(intent);
             }
         });
     }
