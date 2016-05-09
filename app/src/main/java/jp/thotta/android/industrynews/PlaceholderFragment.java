@@ -42,16 +42,24 @@ public class PlaceholderFragment extends Fragment
             new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            News news = (News) view.getTag();
-            Log.d(getClass().getSimpleName(), news.getUrl());
             Intent intent = new Intent(getContext(), DetailNewsActivity.class);
-            intent.putExtra("url", news.getUrl());
-            intent.putExtra("news", news);
+            News news = (News) view.getTag();
+            News foundNews = News.find(news.id, dbHelper.getReadableDatabase());
+            if(foundNews != null) {
+                foundNews.incrementClick();
+                foundNews.updateDatabase(dbHelper.getWritableDatabase());
+                intent.putExtra("news", foundNews);
+            } else {
+                news.incrementClick();
+                news.insertDatabase(dbHelper.getWritableDatabase());
+                intent.putExtra("news", news);
+            }
             startActivity(intent);
         }
     };
     NewsListAdapter mNewsListAdapter;
     ListView mListView;
+    DbHelper dbHelper;
 
     public PlaceholderFragment() {
     }
@@ -71,6 +79,7 @@ public class PlaceholderFragment extends Fragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dbHelper = new DbHelper(getContext());
 //        getLoaderManager().initLoader(0, getArguments(), this).forceLoad();
     }
 

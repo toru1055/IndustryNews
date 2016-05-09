@@ -22,14 +22,14 @@ public class DetailNewsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_news);
         dbHelper = new DbHelper(this);
         Intent intent = getIntent();
-        String url = intent.getStringExtra("url");
         mNews = (News) intent.getSerializableExtra("news");
         mWebView = (WebView) findViewById(R.id.webView);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setWebViewClient(new WebViewClient());
-        mWebView.loadUrl(url);
+        mWebView.loadUrl(mNews.getUrl());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(mNews.getTitle());
+        toolbar.setLogoDescription(mNews.getDescription());
         setSupportActionBar(toolbar);
         FloatingActionButton fabStock = (FloatingActionButton) findViewById(R.id.fabStock);
         fabStock.setOnClickListener(new View.OnClickListener() {
