@@ -80,6 +80,7 @@ public class PlaceholderFragment extends Fragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dbHelper = new DbHelper(getContext());
+        int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
 //        getLoaderManager().initLoader(0, getArguments(), this).forceLoad();
     }
 
@@ -88,34 +89,43 @@ public class PlaceholderFragment extends Fragment
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.news_list_view);
-        int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-        Log.d(getClass().getSimpleName(), "onCreateView.sectionNumber: " + sectionNumber);
         mNewsListAdapter = new NewsListAdapter(getContext());
         mListView.setAdapter(mNewsListAdapter);
         mListView.setOnItemClickListener(onListViewItemClickListener);
-        getLoaderManager().initLoader(0, getArguments(), this).forceLoad();
+        int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+        getLoaderManager().initLoader(sectionNumber, getArguments(), this);
         return rootView;
     }
 
     @Override
     public void onResume() {
-        super.onResume();
         int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-        Log.d(this.getClass().getSimpleName(), "onResume.sectionNumber: " + sectionNumber);
+        Log.d(getClass().getSimpleName(), "onResume is called: " + sectionNumber);
+        getLoaderManager().restartLoader(sectionNumber, getArguments(), this);
+        super.onResume();
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+        Log.d(getClass().getSimpleName(), "onCreateView.sectionNumber: " + sectionNumber);
     }
 
     @Override
     public Loader<List<News>> onCreateLoader(int id, Bundle args) {
         int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-        Log.d(this.getClass().getSimpleName(), "onCreateLoader.id: " + id);
         Log.d(this.getClass().getSimpleName(), "onCreateLoader.sectionNumber: " + sectionNumber);
         Loader loader = new NewsApiLoader(getContext(), sectionNumber);
-        //loader.forceLoad();
+        loader.forceLoad();
         return loader;
     }
 
     @Override
     public void onLoadFinished(Loader<List<News>> loader, List<News> data) {
+        int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+        Log.d(this.getClass().getSimpleName(), "onLoadFinished.sectionNumber: " + sectionNumber);
+        Log.d(this.getClass().getSimpleName(), "onLoadFinished.data: " + data);
         if (data != null) {
             mNewsListAdapter.clear();
             for (News news : data) {
@@ -139,6 +149,8 @@ public class PlaceholderFragment extends Fragment
 
         @Override
         public List<News> loadInBackground() {
+            Log.d(this.getClass().getSimpleName(), "loadInBackground.sectionNumber: " + sectionNumber);
+
 
             try {
                 Thread.sleep(1000);
@@ -152,39 +164,16 @@ public class PlaceholderFragment extends Fragment
                 news3.setDescription(MainActivity.gPagerItemList.get(sectionNumber).getQuery());
                 newsList.add(news2);
                 newsList.add(news3);
+                Log.d(this.getClass().getSimpleName(), "loadInBackground.newsList: " + newsList);
                 return newsList;
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                System.exit(1);
             } catch (Exception e) {
                 e.printStackTrace();
+                System.exit(1);
             }
             return null;
-        }
-    }
-
-    public class NewsListAdapter extends ArrayAdapter<News> {
-
-        public NewsListAdapter(Context context) {
-            super(context, 0);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                LayoutInflater layoutInflater =
-                        (LayoutInflater) getContext().getSystemService(
-                                Context.LAYOUT_INFLATER_SERVICE);
-                convertView = layoutInflater.inflate(R.layout.news_row, null);
-            }
-            News news = getItem(position);
-            TextView titleTextView =
-                    (TextView) convertView.findViewById(R.id.textViewTitle);
-            TextView descriptionTextView =
-                    (TextView) convertView.findViewById(R.id.textViewDescription);
-            titleTextView.setText(news.getTitle());
-            descriptionTextView.setText(news.getDescription());
-            convertView.setTag(news);
-            return convertView;
         }
     }
 }

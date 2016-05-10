@@ -3,12 +3,14 @@ package jp.thotta.android.industrynews;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -46,8 +48,7 @@ public class IndustrySelectionActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                goHome();
             }
         });
         mDbHelper = new DbHelper(this);
@@ -74,6 +75,21 @@ public class IndustrySelectionActivity extends AppCompatActivity
             setMyLayoutParams(checkBox);
             layout.addView(checkBox);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if((keyCode == KeyEvent.KEYCODE_BACK)) {
+            goHome();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    void goHome() {
+        Intent intent = new Intent(IndustrySelectionActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override

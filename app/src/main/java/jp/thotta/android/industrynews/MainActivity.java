@@ -91,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
         fabSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mViewPager.setCurrentItem(0);
                 Intent intent = new Intent(MainActivity.this, IndustrySelectionActivity.class);
                 startActivity(intent);
             }
@@ -100,16 +99,10 @@ public class MainActivity extends AppCompatActivity {
         fabStock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this, StockListActivity.class);
+                startActivity(intent);
             }
         });
-    }
-
-    @Override
-    protected void onRestart() {
-        recreate();
-        super.onRestart();
     }
 
     @Override
