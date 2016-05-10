@@ -77,14 +77,6 @@ public class PlaceholderFragment extends Fragment
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        dbHelper = new DbHelper(getContext());
-        int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-//        getLoaderManager().initLoader(0, getArguments(), this).forceLoad();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -103,13 +95,6 @@ public class PlaceholderFragment extends Fragment
         Log.d(getClass().getSimpleName(), "onResume is called: " + sectionNumber);
         getLoaderManager().restartLoader(sectionNumber, getArguments(), this);
         super.onResume();
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-        Log.d(getClass().getSimpleName(), "onCreateView.sectionNumber: " + sectionNumber);
     }
 
     @Override
@@ -137,6 +122,18 @@ public class PlaceholderFragment extends Fragment
     @Override
     public void onLoaderReset(Loader<List<News>> loader) {
 
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        dbHelper = new DbHelper(getContext());
+    }
+
+    @Override
+    public void onDestroy() {
+        dbHelper.close();
+        super.onDestroy();
     }
 
     public static class NewsApiLoader extends AsyncTaskLoader<List<News>> {
