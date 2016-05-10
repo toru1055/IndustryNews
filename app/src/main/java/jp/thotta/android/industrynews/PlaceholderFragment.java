@@ -31,8 +31,8 @@ import java.util.List;
 public class PlaceholderFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<List<News>> {
     /**
-     * TODO: WebViewにStock機能を作る。StockListActivityを作る
      * TODO: ListViewにAdViewを差し込む方法を調べて実装する
+     *   => 難しいので、複数のListView, Adapterを用意して、その間にAdViewを挟む
      * TODO: 本当はスワイプだけでリロードしたくない。うまく制御したい
      * TODO: test書く
      * TODO: API作る. Android StudioかIntelliJで作る. Spring 使ってみる
