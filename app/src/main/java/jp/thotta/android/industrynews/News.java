@@ -25,7 +25,7 @@ public class News implements Serializable {
     public static final String COL_PUB_DATE = "pub_date";
     public static final String COL_CLICKS = "clicks";
     public static final String COL_IS_STOCKED = "is_stocked";
-    Integer id; //primary key
+    Long id; //primary key
     String url; //not null
     String title; //not null
     String description;
@@ -37,13 +37,13 @@ public class News implements Serializable {
 
     public News() {}
 
-    public News(Integer id, String url, String title) {
+    public News(Long id, String url, String title) {
         this.id = id;
         this.url = url;
         this.title = title;
     }
 
-    public static News find(Integer id, SQLiteDatabase db) {
+    public static News find(Long id, SQLiteDatabase db) {
         String where = COL_ID + " = ?";
         String[] whereArgs = {String.valueOf(id)};
         Cursor cursor =
@@ -71,7 +71,7 @@ public class News implements Serializable {
         return newsList;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -147,7 +147,7 @@ public class News implements Serializable {
         Log.d(getClass().getSimpleName(), "getCount: " + cursor.getCount());
         Log.d(getClass().getSimpleName(), "getColumnIndex(id): " + cursor.getColumnIndex("id"));
         Log.d(getClass().getSimpleName(), "getInt(1): " + cursor.getInt(1));
-        this.id = cursor.getInt(cursor.getColumnIndex(COL_ID));
+        this.id = cursor.getLong(cursor.getColumnIndex(COL_ID));
         this.url = cursor.getString(cursor.getColumnIndex(COL_URL));
         this.title = cursor.getString(cursor.getColumnIndex(COL_TITLE));
         this.description = cursor.getString(cursor.getColumnIndex(COL_DESCRIPTION));

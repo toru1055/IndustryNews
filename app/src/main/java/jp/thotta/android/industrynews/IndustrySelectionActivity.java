@@ -10,13 +10,27 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class IndustrySelectionActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<List<Industry>> {
@@ -112,7 +126,8 @@ public class IndustrySelectionActivity extends AppCompatActivity
     }
 
     public static class IndustryApiLoader extends AsyncTaskLoader<List<Industry>> {
-        List<Industry> mIndustries;
+        private static final String API_URL
+                = "http://www7419up.sakura.ne.jp:8080/industry_news/industry_list";
 
         public IndustryApiLoader(Context context) {
             super(context);
@@ -120,15 +135,38 @@ public class IndustrySelectionActivity extends AppCompatActivity
 
         @Override
         public List<Industry> loadInBackground() {
+            List<Industry> industries = new ArrayList<>();
+            HttpURLConnection urlConnection = null;
             try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
+                URL url = new URL(API_URL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
+                String line;
+                String jsonLine = "";
+                while((line = bufferedReader.readLine()) != null) {
+                    jsonLine += line;
+                }
+                in.close();
+                JSONArray jsonArray = new JSONArray(jsonLine);
+                for(int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject json = jsonArray.getJSONObject(i);
+                    Integer id = json.getInt("id");
+                    String name = json.getString("name");
+                    industries.add(new Industry(id, name));
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if(urlConnection != null) {
+                    urlConnection.disconnect();
+                }
             }
-            mIndustries = new ArrayList<>();
-            mIndustries.add(new Industry(1, "自動車"));
-            mIndustries.add(new Industry(2, "広告"));
-            mIndustries.add(new Industry(3, "住宅"));
-            return mIndustries;
+            return industries;
         }
     }
 
