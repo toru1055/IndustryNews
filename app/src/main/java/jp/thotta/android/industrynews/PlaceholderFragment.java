@@ -110,7 +110,6 @@ public class PlaceholderFragment extends Fragment
     public void onLoadFinished(Loader<List<News>> loader, List<News> data) {
         int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
         Log.d(this.getClass().getSimpleName(), "onLoadFinished.sectionNumber: " + sectionNumber);
-        Log.d(this.getClass().getSimpleName(), "onLoadFinished.data: " + data);
         if (data != null) {
             mNewsListAdapter.clear();
             for (News news : data) {
@@ -134,43 +133,5 @@ public class PlaceholderFragment extends Fragment
     public void onDestroy() {
         dbHelper.close();
         super.onDestroy();
-    }
-
-    public static class NewsApiLoader extends AsyncTaskLoader<List<News>> {
-        int sectionNumber;
-
-        public NewsApiLoader(Context context, int sectionNumber) {
-            super(context);
-            this.sectionNumber = sectionNumber;
-        }
-
-        @Override
-        public List<News> loadInBackground() {
-            Log.d(this.getClass().getSimpleName(), "loadInBackground.sectionNumber: " + sectionNumber);
-
-
-            try {
-                Thread.sleep(1000);
-                List<News> newsList = new ArrayList<>();
-                newsList.add(new News(1L, "http://m.yahoo.co.jp/#1", "ヤフー1"));
-                News news2 = new News(2L, "http://m.yahoo.co.jp/#2", "ヤフー2");
-                news2.setDescription("あああああああああああああああああああああああああああ" +
-                        "あああああああああああああああああああああああああああああああああああ" +
-                        "ああああああああ");
-                News news3 = new News(3L, "http://www.yahoo.co.jp/#3", "ヤフー3");
-                news3.setDescription(MainActivity.gPagerItemList.get(sectionNumber).getQuery());
-                newsList.add(news2);
-                newsList.add(news3);
-                Log.d(this.getClass().getSimpleName(), "loadInBackground.newsList: " + newsList);
-                return newsList;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                System.exit(1);
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-            return null;
-        }
     }
 }
