@@ -70,10 +70,8 @@ public class PlaceholderFragment extends Fragment
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.news_list_view);
-        ListView listView2 = (ListView) rootView.findViewById(R.id.news_list_view2);
         mNewsListAdapter = new NewsListAdapter(getContext());
         mListView.setAdapter(mNewsListAdapter);
-        listView2.setAdapter(mNewsListAdapter);
         mListView.setOnItemClickListener(onListViewItemClickListener);
         int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
         getLoaderManager().initLoader(sectionNumber, getArguments(), this);
