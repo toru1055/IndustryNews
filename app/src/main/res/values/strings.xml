@@ -5,4 +5,5 @@
     <string name="title_activity_setting">Industry Selection</string>
     <string name="title_activity_detail_news">DetailNewsActivity</string>
     <string name="title_activity_stock_list">StockListActivity</string>
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
 </resources>

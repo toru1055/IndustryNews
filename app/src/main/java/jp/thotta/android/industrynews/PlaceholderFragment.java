@@ -3,26 +3,23 @@ package jp.thotta.android.industrynews;
 /**
  */
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+
 import java.util.List;
 
 /**
@@ -49,6 +46,7 @@ public class PlaceholderFragment extends Fragment
     NewsListAdapter mNewsListAdapter;
     ListView mListView;
     DbHelper dbHelper;
+    AdView mAdView;
 
     public PlaceholderFragment() {
     }
@@ -66,10 +64,22 @@ public class PlaceholderFragment extends Fragment
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        mAdView = new AdView(getActivity());
+        mAdView.setAdSize(AdSize.BANNER);
+        mAdView.setAdUnitId(getString(R.string.banner_ad_unit_id));
+
         mListView = (ListView) rootView.findViewById(R.id.news_list_view);
+        mListView.addHeaderView(mAdView);
         mNewsListAdapter = new NewsListAdapter(getContext());
         mListView.setAdapter(mNewsListAdapter);
         mListView.setOnItemClickListener(onListViewItemClickListener);
@@ -84,6 +94,18 @@ public class PlaceholderFragment extends Fragment
         Log.d(getClass().getSimpleName(), "onResume is called: " + sectionNumber);
         getLoaderManager().restartLoader(sectionNumber, getArguments(), this);
         super.onResume();
+        mAdView.resume();
+    }
+
+    @Override
+    public void onPause() {
+        mAdView.pause();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 
     @Override
