@@ -10,9 +10,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -23,9 +25,6 @@ import java.util.List;
 import jp.thotta.android.industrynews.view.SlidingTabLayout;
 
 public class MainActivity extends AppCompatActivity {
-    /*
-     */
-
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -48,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        toolbar.setTitle("意識高い系ニュース");
+//        setSupportActionBar(toolbar);
         mDbHelper = new DbHelper(this);
         if (Industry.isEmpty(mDbHelper.getReadableDatabase())) {
             startActivity(new Intent(this, IndustrySelectionActivity.class));
@@ -68,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
             List<Industry> l = new ArrayList<>();
             l.add(industry);
             gPagerItemList.add(new PagerItem(industry.getName(),
-                    industry.getSortMode(), l, Color.YELLOW, Color.GRAY));
+                    industry.getSortMode(), l,
+                    industry.getColor(), Color.GRAY));
         }
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         Log.d(getClass().getSimpleName(), "onResume.pagerAdapeterCount: " + mSectionsPagerAdapter.getCount());

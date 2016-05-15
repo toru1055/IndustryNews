@@ -34,8 +34,6 @@ public class PlaceholderFragment extends Fragment
      * TODO: ListViewにAdViewを差し込む方法を調べて実装する
      *   => 難しいので、複数のListView, Adapterを用意して、その間にAdViewを挟む
      * TODO: 本当はスワイプだけでリロードしたくない。うまく制御したい
-     * TODO: test書く
-     * TODO: API作る. Android StudioかIntelliJで作る. Spring 使ってみる
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
     AdapterView.OnItemClickListener onListViewItemClickListener =
@@ -44,16 +42,7 @@ public class PlaceholderFragment extends Fragment
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Intent intent = new Intent(getContext(), DetailNewsActivity.class);
             News news = (News) view.getTag();
-            News foundNews = News.find(news.id, dbHelper.getReadableDatabase());
-            if(foundNews != null) {
-                foundNews.incrementClick();
-                foundNews.updateDatabase(dbHelper.getWritableDatabase());
-                intent.putExtra("news", foundNews);
-            } else {
-                news.incrementClick();
-                news.insertDatabase(dbHelper.getWritableDatabase());
-                intent.putExtra("news", news);
-            }
+            intent.putExtra("news", news);
             startActivity(intent);
         }
     };
@@ -81,8 +70,10 @@ public class PlaceholderFragment extends Fragment
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.news_list_view);
+        ListView listView2 = (ListView) rootView.findViewById(R.id.news_list_view2);
         mNewsListAdapter = new NewsListAdapter(getContext());
         mListView.setAdapter(mNewsListAdapter);
+        listView2.setAdapter(mNewsListAdapter);
         mListView.setOnItemClickListener(onListViewItemClickListener);
         int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
         getLoaderManager().initLoader(sectionNumber, getArguments(), this);

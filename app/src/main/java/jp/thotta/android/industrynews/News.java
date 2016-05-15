@@ -123,6 +123,14 @@ public class News implements Serializable {
         clicks += 1;
     }
 
+    public void setClicks(Integer clicks) {
+        this.clicks = clicks;
+    }
+
+    public Integer getClicks() {
+        return clicks;
+    }
+
     public boolean isStocked() {
         return isStocked;
     }

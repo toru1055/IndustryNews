@@ -10,7 +10,7 @@ import android.util.Log;
  */
 public class DbHelper extends SQLiteOpenHelper {
     public DbHelper(Context context) {
-        super(context, "industry_news.db", null, 2);
+        super(context, "industry_news.db", null, 3);
     }
 
     private static void createIndustry(SQLiteDatabase db) {

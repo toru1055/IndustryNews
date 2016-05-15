@@ -48,7 +48,7 @@
 
             <TextView
                 android:id="@+id/textViewTitle1"
-                android:layout_width="60dp"
+                android:layout_width="48dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/viewLine"
                 android:text="T"

@@ -1,6 +1,7 @@
 package jp.thotta.android.industrynews;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,6 +11,13 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class DetailNewsActivity extends AppCompatActivity {
     WebView mWebView;
@@ -23,6 +31,19 @@ public class DetailNewsActivity extends AppCompatActivity {
         dbHelper = new DbHelper(this);
         Intent intent = getIntent();
         mNews = (News) intent.getSerializableExtra("news");
+
+        News foundNews = News.find(mNews.id, dbHelper.getReadableDatabase());
+        if(foundNews == null) {
+            mNews.incrementClick();
+            mNews.insertDatabase(dbHelper.getWritableDatabase());
+            new ClickAsyncTask().execute(mNews);
+        } else {
+            mNews.setClicks(foundNews.getClicks());
+            mNews.setIsStocked(foundNews.isStocked());
+            mNews.incrementClick();
+            mNews.updateDatabase(dbHelper.getWritableDatabase());
+        }
+
         mWebView = (WebView) findViewById(R.id.webView);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setWebViewClient(new WebViewClient());
@@ -59,6 +80,25 @@ public class DetailNewsActivity extends AppCompatActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public static class ClickAsyncTask extends AsyncTask<News, Void, Void> {
+        private static final String BASE_API_URL =
+                "http://www7419up.sakura.ne.jp:8080/industry_news/click_news?id=";
+
+        @Override
+        protected Void doInBackground(News... params) {
+            try {
+                URL api_url = new URL(BASE_API_URL + params[0].getId());
+                HttpURLConnection urlConnection = (HttpURLConnection) api_url.openConnection();
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
 }

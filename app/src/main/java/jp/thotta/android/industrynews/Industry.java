@@ -3,6 +3,8 @@ package jp.thotta.android.industrynews;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.provider.CalendarContract;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +20,8 @@ public class Industry {
     public static final String COL_IS_READING = "is_reading";
     public static final String COL_LAST_UPDATED = "last_updated";
     public static final String COL_SORT_MODE = "sort_mode";
+    static int[] colors = {Color.YELLOW, Color.RED, Color.CYAN};
+
     Integer id;
     String name;
     Boolean isReading = false;
@@ -138,5 +142,9 @@ public class Industry {
         String where = COL_ID + " = ?";
         String[] whereArgs = {String.valueOf(id)};
         db.update(TABLE_NAME, getContentValues(), where, whereArgs);
+    }
+
+    public int getColor() {
+        return colors[id % colors.length];
     }
 }
