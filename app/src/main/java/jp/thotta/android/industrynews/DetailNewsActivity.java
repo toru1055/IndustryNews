@@ -1,6 +1,7 @@
 package jp.thotta.android.industrynews;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -69,6 +70,14 @@ public class DetailNewsActivity extends AppCompatActivity {
                 Intent intent = new Intent(DetailNewsActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+            }
+        });
+        FloatingActionButton fabBrowser = (FloatingActionButton) findViewById(R.id.fabBrowser);
+        fabBrowser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse(mNews.getUrl());
+                startActivity(new Intent(Intent.ACTION_VIEW, uri));
             }
         });
     }
