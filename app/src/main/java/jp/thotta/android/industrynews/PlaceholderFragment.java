@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -27,14 +28,14 @@ import com.google.android.gms.ads.AdView;
 
 import java.util.List;
 
+import jp.thotta.android.industrynews.view.SlidingTabLayout;
+
 /**
  * Created by thotta on 2016/05/06.
  */
 public class PlaceholderFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<List<News>> {
     /**
-     * TODO: ListViewにAdViewを差し込む方法を調べて実装する
-     *   => 難しいので、複数のListView, Adapterを用意して、その間にAdViewを挟む
      * TODO: 本当はスワイプだけでリロードしたくない。うまく制御したい
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
@@ -53,9 +54,9 @@ public class PlaceholderFragment extends Fragment
     DbHelper dbHelper;
     AdView mAdView;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    ActionBar mActionBar;
 
-    public PlaceholderFragment() {
-    }
+    public PlaceholderFragment() {}
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -76,33 +77,7 @@ public class PlaceholderFragment extends Fragment
                 .addTestDevice(getString(R.string.test_device_id))
                 .build();
         mAdView.loadAd(adRequest);
-
-//        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-//            private int mLastFirstVisibleItem;
-//            private int mScrollState;
-//
-//            @Override
-//            public void onScrollStateChanged(AbsListView view, int scrollState) {
-//                // http://stackoverflow.com/questions/16791100/detect-scroll-up-scroll-down-in-listview
-//                // TODO: 真似する, toolbarを取得して、hide/showする
-//            }
-//
-//            @Override
-//            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-//                if(view.getId() == mListView.getId()) {
-//                    final int currentFirstVisibleItem = mListView.getFirstVisiblePosition();
-//                    ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-//                    if (currentFirstVisibleItem > mLastFirstVisibleItem) {
-//                        Log.d(getClass().getSimpleName(), "Scrolling down");
-//                        actionBar.hide();
-//                    } else if (currentFirstVisibleItem < mLastFirstVisibleItem) {
-//                        Log.d(getClass().getSimpleName(), "Scrolling up");
-//                        actionBar.show();
-//                    }
-//                    mLastFirstVisibleItem = currentFirstVisibleItem;
-//                }
-//            }
-//        });
+        mActionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
     }
 
     @Override
@@ -112,7 +87,6 @@ public class PlaceholderFragment extends Fragment
         mAdView = new AdView(getActivity());
         mAdView.setAdSize(AdSize.BANNER);
         mAdView.setAdUnitId(getString(R.string.banner_ad_unit_id));
-
 
         mListView = (ListView) rootView.findViewById(R.id.news_list_view);
         mListView.addHeaderView(mAdView);
