@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -51,6 +52,7 @@ public class PlaceholderFragment extends Fragment
     ListView mListView;
     DbHelper dbHelper;
     AdView mAdView;
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     public PlaceholderFragment() {
     }
@@ -75,32 +77,32 @@ public class PlaceholderFragment extends Fragment
                 .build();
         mAdView.loadAd(adRequest);
 
-        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            private int mLastFirstVisibleItem;
-            private int mScrollState;
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                // http://stackoverflow.com/questions/16791100/detect-scroll-up-scroll-down-in-listview
-                // TODO: 真似する, toolbarを取得して、hide/showする
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if(view.getId() == mListView.getId()) {
-                    final int currentFirstVisibleItem = mListView.getFirstVisiblePosition();
-                    ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-                    if (currentFirstVisibleItem > mLastFirstVisibleItem) {
-                        Log.d(getClass().getSimpleName(), "Scrolling down");
-                        actionBar.hide();
-                    } else if (currentFirstVisibleItem < mLastFirstVisibleItem) {
-                        Log.d(getClass().getSimpleName(), "Scrolling up");
-                        actionBar.show();
-                    }
-                    mLastFirstVisibleItem = currentFirstVisibleItem;
-                }
-            }
-        });
+//        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+//            private int mLastFirstVisibleItem;
+//            private int mScrollState;
+//
+//            @Override
+//            public void onScrollStateChanged(AbsListView view, int scrollState) {
+//                // http://stackoverflow.com/questions/16791100/detect-scroll-up-scroll-down-in-listview
+//                // TODO: 真似する, toolbarを取得して、hide/showする
+//            }
+//
+//            @Override
+//            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+//                if(view.getId() == mListView.getId()) {
+//                    final int currentFirstVisibleItem = mListView.getFirstVisiblePosition();
+//                    ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+//                    if (currentFirstVisibleItem > mLastFirstVisibleItem) {
+//                        Log.d(getClass().getSimpleName(), "Scrolling down");
+//                        actionBar.hide();
+//                    } else if (currentFirstVisibleItem < mLastFirstVisibleItem) {
+//                        Log.d(getClass().getSimpleName(), "Scrolling up");
+//                        actionBar.show();
+//                    }
+//                    mLastFirstVisibleItem = currentFirstVisibleItem;
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -119,6 +121,15 @@ public class PlaceholderFragment extends Fragment
         mListView.setOnItemClickListener(onListViewItemClickListener);
         int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
         getLoaderManager().initLoader(sectionNumber, getArguments(), this);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+                getLoaderManager().restartLoader(sectionNumber, getArguments(), PlaceholderFragment.this);
+            }
+        });
         return rootView;
     }
 
@@ -161,6 +172,7 @@ public class PlaceholderFragment extends Fragment
                 mNewsListAdapter.add(news);
             }
         }
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
