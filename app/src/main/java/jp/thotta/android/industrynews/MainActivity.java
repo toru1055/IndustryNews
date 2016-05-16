@@ -47,9 +47,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        toolbar.setTitle("意識高い系ニュース");
-//        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("意識高い系ニュース");
+        setSupportActionBar(toolbar);
         mDbHelper = new DbHelper(this);
         if (Industry.isEmpty(mDbHelper.getReadableDatabase())) {
             startActivity(new Intent(this, IndustrySelectionActivity.class));

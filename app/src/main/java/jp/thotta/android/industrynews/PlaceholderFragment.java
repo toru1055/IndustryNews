@@ -9,10 +9,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -66,8 +70,37 @@ public class PlaceholderFragment extends Fragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(getString(R.string.test_device_id))
+                .build();
         mAdView.loadAd(adRequest);
+
+        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int mLastFirstVisibleItem;
+            private int mScrollState;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // http://stackoverflow.com/questions/16791100/detect-scroll-up-scroll-down-in-listview
+                // TODO: 真似する, toolbarを取得して、hide/showする
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if(view.getId() == mListView.getId()) {
+                    final int currentFirstVisibleItem = mListView.getFirstVisiblePosition();
+                    ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+                    if (currentFirstVisibleItem > mLastFirstVisibleItem) {
+                        Log.d(getClass().getSimpleName(), "Scrolling down");
+                        actionBar.hide();
+                    } else if (currentFirstVisibleItem < mLastFirstVisibleItem) {
+                        Log.d(getClass().getSimpleName(), "Scrolling up");
+                        actionBar.show();
+                    }
+                    mLastFirstVisibleItem = currentFirstVisibleItem;
+                }
+            }
+        });
     }
 
     @Override
@@ -77,6 +110,7 @@ public class PlaceholderFragment extends Fragment
         mAdView = new AdView(getActivity());
         mAdView.setAdSize(AdSize.BANNER);
         mAdView.setAdUnitId(getString(R.string.banner_ad_unit_id));
+
 
         mListView = (ListView) rootView.findViewById(R.id.news_list_view);
         mListView.addHeaderView(mAdView);
