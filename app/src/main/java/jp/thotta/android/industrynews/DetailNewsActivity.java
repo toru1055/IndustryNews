@@ -24,6 +24,8 @@ public class DetailNewsActivity extends AppCompatActivity {
     WebView mWebView;
     News mNews;
     DbHelper dbHelper;
+    FloatingActionButton mFabStock;
+    FloatingActionButton mFabUnStock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +55,38 @@ public class DetailNewsActivity extends AppCompatActivity {
         toolbar.setTitle(mNews.getTitle());
         toolbar.setLogoDescription(mNews.getDescription());
         setSupportActionBar(toolbar);
-        FloatingActionButton fabStock = (FloatingActionButton) findViewById(R.id.fabStock);
-        fabStock.setOnClickListener(new View.OnClickListener() {
+        mFabStock = (FloatingActionButton) findViewById(R.id.fabStock);
+        mFabStock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mNews.setIsStocked(true);
                 mNews.updateDatabase(dbHelper.getWritableDatabase());
                 Snackbar.make(view, "Stocked: " + mNews.getTitle(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                mFabStock.hide();
+                mFabUnStock.show();
             }
         });
+        mFabUnStock = (FloatingActionButton) findViewById(R.id.fabUnStock);
+        mFabUnStock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mNews.setIsStocked(false);
+                mNews.updateDatabase(dbHelper.getWritableDatabase());
+                Snackbar.make(view, "UnStocked: " + mNews.getTitle(), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                mFabUnStock.hide();
+                mFabStock.show();
+            }
+        });
+        if(mNews.isStocked()) {
+            mFabStock.hide();
+            mFabUnStock.show();
+        } else {
+            mFabUnStock.hide();
+            mFabStock.show();
+        }
+
         FloatingActionButton fabHome = (FloatingActionButton) findViewById(R.id.fabHome);
         fabHome.setOnClickListener(new View.OnClickListener() {
             @Override

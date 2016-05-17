@@ -71,6 +71,11 @@ public class StockListActivity extends AppCompatActivity {
         mListView.setAdapter(mNewsListAdapter);
         mListView.setOnItemClickListener(onListViewItemClickListener);
         mListView.setOnItemLongClickListener(onListViewItemLongClickListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         refreshAdapter();
     }
 
