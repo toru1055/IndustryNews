@@ -75,6 +75,7 @@ public class PlaceholderFragment extends Fragment
         super.onActivityCreated(savedInstanceState);
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(getString(R.string.test_device_id))
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
         mAdView.loadAd(adRequest);
         mActionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
