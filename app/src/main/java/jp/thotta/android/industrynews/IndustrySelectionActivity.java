@@ -5,6 +5,7 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -116,7 +117,9 @@ public class IndustrySelectionActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<List<Industry>> loader, List<Industry> data) {
-        Industry.addAll(data, mDbHelper.getWritableDatabase());
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Industry.addAll(data, db);
+        Industry.updateNames(data, db);
         generateCheckBoxes();
     }
 

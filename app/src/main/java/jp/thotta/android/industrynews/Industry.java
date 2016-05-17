@@ -43,11 +43,32 @@ public class Industry {
         return (tableSize == 0);
     }
 
+    public static Industry find(Integer id, SQLiteDatabase db) {
+        String where = COL_ID + " = ?";
+        String[] whereArgs = {String.valueOf(id)};
+        Cursor cursor =
+                db.query(TABLE_NAME, null, where, whereArgs, null, null, null);
+        if(cursor.getCount() == 1 && cursor.moveToFirst()) {
+            Industry industry = new Industry();
+            industry.readCursor(cursor);
+            return industry;
+        }
+        return null;
+    }
+
     public static void addAll(List<Industry> industries, SQLiteDatabase db) {
         for (Industry industry : industries) {
             db.insertWithOnConflict(TABLE_NAME, null,
                     industry.getContentValues(),
                     SQLiteDatabase.CONFLICT_IGNORE);
+        }
+    }
+
+    public static void updateNames(List<Industry> industries, SQLiteDatabase db) {
+        for (Industry industry : industries) {
+            Industry dbIndustry = Industry.find(industry.getId(), db);
+            dbIndustry.setName(industry.getName());
+            dbIndustry.updateDatabase(db);
         }
     }
 
