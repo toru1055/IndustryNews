@@ -66,12 +66,13 @@
                 android:layout_height="wrap_content"
                 android:text="itle"
                 android:textIsSelectable="false"
-                android:textSize="24dp"
+                android:textSize="20dp"
                 android:layout_alignTop="@+id/textViewTitle1"
                 android:layout_toRightOf="@+id/textViewTitle1"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:textColor="@color/abc_primary_text_material_light"/>
+                android:textColor="@color/abc_primary_text_material_light"
+                android:maxLines="3" />
 
             <TextView
                 android:id="@+id/textViewDescription"
@@ -84,7 +85,8 @@
                 android:layout_alignEnd="@+id/textViewSubscription"
                 android:textSize="12dp"
                 android:textColor="@color/abc_secondary_text_material_light"
-                android:padding="2dp"/>
+                android:padding="2dp"
+                android:maxLines="4" />
 
             <TextView
                 android:layout_width="wrap_content"
