@@ -26,9 +26,7 @@ public class NewsListAdapter extends ArrayAdapter<News> {
                             Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.news_row, null);
         }
-        News news = getItem(position);
-//        TextView titleHeadTextView =
-//                (TextView) convertView.findViewById(R.id.textViewTitle1);
+
         TextView titleTextView =
                 (TextView) convertView.findViewById(R.id.textViewTitle);
         TextView descriptionTextView =
@@ -40,8 +38,7 @@ public class NewsListAdapter extends ArrayAdapter<News> {
         TextView subscriptionTextView =
                 (TextView) convertView.findViewById(R.id.textViewSubscription);
 
-//        titleHeadTextView.setText(news.getTitle().substring(0, 1));
-//        titleTextView.setText(news.getTitle().substring(1));
+        News news = getItem(position);
         titleTextView.setText(news.getTitle());
         descriptionTextView.setText(news.getDescription());
         industryTextView.setText(news.getIndustryName());
