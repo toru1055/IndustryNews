@@ -141,7 +141,7 @@ public class PlaceholderFragment extends Fragment
     public void onLoadFinished(Loader<List<News>> loader, List<News> data) {
         int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
         Log.d(this.getClass().getSimpleName(), "onLoadFinished.sectionNumber: " + sectionNumber);
-        if (data != null) {
+        if (data != null && data.size() > 0) {
             mNewsListAdapter.clear();
             for (News news : data) {
                 mNewsListAdapter.add(news);
