@@ -22,9 +22,10 @@
                 android:layout_alignParentTop="true"
                 android:text="Industry"
                 android:layout_margin="2dp"
-                android:background="#0000ff"
+                android:background="@color/button_material_dark"
                 android:padding="2dp"
-                android:textColor="@color/abc_primary_text_material_dark"/>
+                android:textColor="@color/abc_primary_text_material_dark"
+                android:autoText="true" />
 
             <TextView
                 android:layout_width="wrap_content"

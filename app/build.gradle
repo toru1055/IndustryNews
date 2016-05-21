@@ -8,8 +8,8 @@ android {
         applicationId "jp.thotta.android.industrynews"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 5
-        versionName "1.5"
+        versionCode 6
+        versionName "1.6"
     }
     buildTypes {
         release {
