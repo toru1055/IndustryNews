@@ -46,6 +46,7 @@ public class PlaceholderFragment extends Fragment
             Intent intent = new Intent(getContext(), DetailNewsActivity.class);
             News news = (News) view.getTag();
             intent.putExtra("news", news);
+            Log.d(getClass().getSimpleName(), "ListView item was clicked: " + news.getTitle());
             startActivity(intent);
         }
     };
